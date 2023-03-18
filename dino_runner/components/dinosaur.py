@@ -6,17 +6,24 @@ X_POS = 80
 Y_POS = 310
 JUMP_VEL = 8.5
 
+
+
+
 class Dinosaur:
     def __init__(self):
         self.image = RUNNING[0]
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = X_POS
         self.dino_rect.y = Y_POS
-        self.dino_status = 0
+
         self.step_index = 0
         self.jump_vel = JUMP_VEL
 
-    
+        # 0: Correndo
+        # 1: No ar
+        # 2: Agachado
+        # 3: Descendo
+        self.dino_status = 0
 
     def run(self):
         self.image = RUNNING[0] if self.step_index < 5 else RUNNING[1] #ternary operator 
