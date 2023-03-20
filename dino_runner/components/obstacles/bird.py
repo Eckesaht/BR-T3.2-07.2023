@@ -1,13 +1,12 @@
 from dino_runner.components.obstacles.obstacle import Obstacle
-from time import sleep
 
 class Bird(Obstacle):
     def __init__(self, images):
         self.type = 0
+        self.counter = 0
         super().__init__(images, self.type)
         self.list = [images[self.type], images[self.type + 1]]
         self.rect.y = 260
-        self.counter = 0
 
     def update(self, game_speed, obstacles):
         super().update(game_speed, obstacles)

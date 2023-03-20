@@ -7,7 +7,6 @@ from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD
 class ObstacleManager:
     def __init__(self):
         self.obstacles = []
-        self.index = 0
 
     def update(self, game):
         self.choice = random.randint(0, 2)
@@ -23,7 +22,6 @@ class ObstacleManager:
 
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
-
             
             if game.player.dino_rect.colliderect(obstacle.rect):
                 pygame.time.delay(500)
