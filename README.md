@@ -17,7 +17,7 @@
 6. Remover todo tipo de código comentado do projeto final
 7. Revisar e entender o código relacionado ao PowerUp
 
-##Opcional
+## Opcional
 1. Seleccionar o nivel de dificuldade 
 2. Adicionar Moedas que aumentaria os pontos
 3. Adicionar um nivel de vida(sangue) para dinosaurio, ou seja se ele bater no obstacle ele não morreria mas sim diminuiria seu nivel de vida uma vez que a vida estivesse vazia ele morreria. Ele poderia recuperar o nivel de vida uma vez que ele comesse algun tipo de comida
