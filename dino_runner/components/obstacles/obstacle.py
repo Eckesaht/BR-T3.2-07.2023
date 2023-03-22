@@ -14,5 +14,8 @@ class Obstacle:
         self.rect.x -= game_speed
         
         if self.rect.x < -self.rect.width:
-            obstacles.pop()        
-        
+            obstacles.pop()    
+            
+    def set_y_pos(self, y_pos):
+        self.rect.y = y_pos    
+    
