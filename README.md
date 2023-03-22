@@ -1,6 +1,6 @@
 # BR-T3.2-07.2023
 
-#Requerimentos para o projeto final
+# Requerimentos para o projeto final
 ## Obrigatório
 1. Adicionar outros tipos de power_up por exemplo:
    - Hammer destroi somente os cactus
