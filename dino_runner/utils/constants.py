@@ -2,11 +2,14 @@ import pygame
 import os
 
 # Global Constants
+pygame.mixer.init()
 TITLE = "Dino Runner"
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
+FONT_SIZE = 35
+FONT_TYPE = 'None'
 
 # Assets Constants
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
@@ -25,6 +28,12 @@ RUNNING_HAMMER = [
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoDuck1Hammer.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoRun2.png")),
 ]
+
+JUMPING_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Jump.mp3"))
+
+DEATH_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Death.mp3"))
+
+POINT_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Point.mp3"))
 
 JUMPING = pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoJump.png"))
 JUMPING_SHIELD = pygame.image.load(os.path.join(IMG_DIR, "Dino/DinoJumpShield.png"))

@@ -1,6 +1,6 @@
 import pygame
 
-from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING
+from dino_runner.utils.constants import RUNNING, JUMPING, DUCKING, JUMPING_SOUND
 
 X_POS = 80
 Y_POS = 310
@@ -8,6 +8,7 @@ JUMP_VEL = 8.5
 
 class Dinosaur:
     def __init__(self):
+        pygame.mixer.init()
         self.image = RUNNING[0]
         self.dino_rect = self.image.get_rect()
         self.dino_rect.x = X_POS
@@ -28,7 +29,8 @@ class Dinosaur:
 
     def jump(self):
         self.image = JUMPING
-        
+
+
         if self.dino_jump:
             self.dino_rect.y -= self.jump_vel*4
             self.jump_vel -=0.8
@@ -48,8 +50,9 @@ class Dinosaur:
         self.dino_duck = False        
     
     def update(self, user_input):
-        if user_input[pygame.K_UP] and not self.dino_jump:
+        if user_input[pygame.K_UP] and not self.dino_jump and not self.dino_duck:
             self.dino_jump = True
+            JUMPING_SOUND.play()
             self.dino_run = False
             self.dino_duck = False
         elif user_input[pygame.K_DOWN] and not self.dino_jump:
