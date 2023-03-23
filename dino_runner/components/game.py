@@ -1,6 +1,6 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE, POINT_SOUND
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
@@ -8,6 +8,7 @@ from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 class Game:
     def __init__(self):
         pygame.init()
+        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -65,9 +66,9 @@ class Game:
         
     def update_score(self):
         self.score+=1
-        
         if self.score%100 == 0:
             self.game_speed+=5
+            POINT_SOUND.play()
         
         
     def draw(self):
@@ -118,19 +119,19 @@ class Game:
         
     def show_menu(self):
         self.screen.fill((255,255,255))
-        
+        default_font = pygame.font.Font(FONT_STYLE, 22)
         half_screen_height = SCREEN_HEIGHT //2
         half_screen_width = SCREEN_WIDTH //2
         
         if self.death_count == 0:
-            font = pygame.font.Font(FONT_STYLE, 22)
-            text = font.render("Press (S) to start playing", True, (0,0,0))
+            #font = pygame.font.Font(FONT_STYLE, 22)
+            text = default_font.render("Press (S) to start playing", True, (0,0,0))
             text_rect = text.get_rect()
             text_rect.center = (half_screen_width, half_screen_height)
             self.screen.blit(text, text_rect)
         else:
-            font = pygame.font.Font(FONT_STYLE, 22)
-            text = font.render("Press (C) to continue playing", True, (0,0,0))
+            #font = pygame.font.Font(FONT_STYLE, 22)
+            text = default_font.render("Press (C) to continue playing", True, (0,0,0))
             text_rect = text.get_rect()
             text_rect.center = (half_screen_width, half_screen_height)
             self.screen.blit(text, text_rect)
@@ -149,5 +150,10 @@ class Game:
                     self.run()
                 elif pygame.key.get_pressed()[pygame.K_c]:
                     self.run()
-                
+        
+        
+    def show_deaths(self):
+        show_deaths = self.FONT.render((f'Deaths: {self.deaths}'), True, (0, 0, 0))
+        self.screen.blit(show_deaths, (SCREEN_WIDTH - 150, (SCREEN_HEIGHT + 10) - SCREEN_HEIGHT))
+
             

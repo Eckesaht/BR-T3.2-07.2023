@@ -3,21 +3,22 @@ import random
 
 from dino_runner.components.obstacles.cactus import Cactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SMALL_CACTUS_Y_POS, LARGE_CACTUS_Y_POS, BIRD_Y_POS
+from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS, BIRD, SMALL_CACTUS_Y_POS, LARGE_CACTUS_Y_POS, BIRD_Y_POS, DEATH_SOUND
 
 class ObstacleManager:
     def __init__(self):
         self.obstacles = []
-    
+        pygame.mixer.init()
+
     def update(self, game):
         if len(self.obstacles) == 0:
             obst = random.randint(1,3)
             if obst == 1:
-                obstacle = (Cactus(SMALL_CACTUS))
-                obstacle.set_y_pos(SMALL_CACTUS_Y_POS)
+                obstacle = (Cactus(SMALL_CACTUS, 325))
+                #obstacle.set_y_pos(SMALL_CACTUS_Y_POS)
             elif obst == 2:
-                obstacle = Cactus(LARGE_CACTUS)
-                obstacle.set_y_pos(LARGE_CACTUS_Y_POS)
+                obstacle = Cactus(LARGE_CACTUS, 300)
+                #obstacle.set_y_pos(LARGE_CACTUS_Y_POS)
             else:
                 obstacle = Bird(BIRD) 
                 obstacle.set_y_pos(BIRD_Y_POS)
@@ -31,10 +32,34 @@ class ObstacleManager:
                 if not game.player.has_power_up:
                     pygame.time.delay(500)
                     game.playing = False
-                    game.death_count+=1
-                    break                
+                    game.death_count += 1
+                    DEATH_SOUND.play()
+                    break
                 else:
-                    self.obstacles.remove(obstacle)
+                    if game.player.has_power_up:
+                        if game.player.has_hammer == True:
+                            if isinstance(obstacle, Cactus):
+                                self.obstacles.remove(obstacle)
+                            else:
+                                pygame.time.delay(500)
+                                game.playing = False
+                                game.death_count += 1
+                                DEATH_SOUND.play()
+                                break
+                        
+                        elif game.player.has_sword == True:
+                            if isinstance(obstacle, Bird):
+                                self.obstacles.remove(obstacle)
+                            else:
+                                pygame.time.delay(500)
+                                game.playing = False
+                                game.death_count += 1
+                                DEATH_SOUND.play()
+                                break
+                        
+                        else:
+                            self.obstacles.remove(obstacle)
+                    
     
     def draw(self, screen):
         for obstacle in self.obstacles:

@@ -7,7 +7,7 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 FPS = 30
 FONT_STYLE = "freesansbold.ttf"
-
+pygame.mixer.init()
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
 
 SMALL_CACTUS_Y_POS = 325
@@ -16,6 +16,8 @@ BIRD_Y_POS = 250
 
 DEFAULT_TYPE = "default"
 SHIELD_TYPE = "shield"
+HAMMER_TYPE = "hammer"
+SWORD_TYPE = "sword"
 
 # Assets Constants
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
@@ -65,14 +67,32 @@ LARGE_CACTUS = [
     pygame.image.load(os.path.join(IMG_DIR, "Cactus/LargeCactus3.png")),
 ]
 
+JUMPING_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Jump.mp3"))
+DEATH_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Death.mp3"))
+POINT_SOUND = pygame.mixer.Sound(os.path.join(IMG_DIR, "Dino/Dino_Point.mp3"))
+
 BIRD = [
     pygame.image.load(os.path.join(IMG_DIR, "Bird/Bird1.png")),
     pygame.image.load(os.path.join(IMG_DIR, "Bird/Bird2.png")),
 ]
 
+METEOR = pygame.image.load(os.path.join(IMG_DIR, "Meteor/Meteor.png")),
+
+
+
+""" RUNNING_SWORD = [
+    pygame.image.load(os.path.join(IMG_DIR, 'Dino/DinoSword1.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Dino/DinoSword2.png')),
+] """
+
+#JUMPING_SWORD = pygame.image.load(os.path.join(IMG_DIR, 'Dino/DinoSword1.png'))
+
+#DUCKING_SWORD = pygame.image.load(os.path.join(IMG_DIR, 'Dino/DinoSword2.png'))
+
 CLOUD = pygame.image.load(os.path.join(IMG_DIR, 'Other/Cloud.png'))
 SHIELD = pygame.image.load(os.path.join(IMG_DIR, 'Other/shield.png'))
 HAMMER = pygame.image.load(os.path.join(IMG_DIR, 'Other/hammer.png'))
+#SWORD = pygame.image.load(os.path.join(IMG_DIR, 'Other/sword.png'))
 
 BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 
