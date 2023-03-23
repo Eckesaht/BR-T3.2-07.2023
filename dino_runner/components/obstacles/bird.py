@@ -3,10 +3,11 @@ import random
 from dino_runner.components.obstacles.obstacle import Obstacle
 
 class Bird(Obstacle):
-    def __init__(self,images):
+    def __init__(self,images, y):
         super().__init__(images, random.randint(0,1))
         self.images = images
         self.flying_index = 0
+        self.rect.y = y
         
         self.touched_ground = False
         #this will decide if the bird would be in zig-zig or not
@@ -22,11 +23,11 @@ class Bird(Obstacle):
         if self.moving:
             if not self.touched_ground:
                 self.rect.y +=10
-                if self.rect.y > 350:
+                if self.rect.y > 545:
                     self.touched_ground = True
             else:
                 self.rect.y -=10
-                if self.rect.y < 200:
+                if self.rect.y < 395:
                     self.touched_ground = False
         
         if self.flying_index >=10:

@@ -9,12 +9,12 @@ from dino_runner.utils.constants import HAMMER_TYPE #SWORD_TYPE
 class PowerUpManager:
     def __init__(self):
         self.power_ups = []
-        self.when_appears = 0
+        self.when_appears = random.randint(250, 300)
         self.choice = [Shield(), Hammer()]
 
     def generate_power_up(self, score):
-        if len(self.power_ups) == 0 and self.when_appears == score:
-            self.when_appears += random.randint(200,300)
+        if score >= self.when_appears and score <= self.when_appears + 300 and score % self.when_appears == 0:
+            #self.when_appears += random.randint(200,300)
             self.power_ups.append(random.choice(self.choice))
             
     def update(self, game):
@@ -44,7 +44,7 @@ class PowerUpManager:
     
     def reset_power_ups(self):
         self.power_ups.clear()
-        self.when_appears = random.randint(200,300)
+        #self.when_appears = random.randint(200,300)
             
     
     

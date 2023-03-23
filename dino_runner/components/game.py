@@ -1,14 +1,15 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, FONT_STYLE, DEFAULT_TYPE, POINT_SOUND
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, POINT_SOUND, FONT, FONT_COLOR, HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT
+
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
 from dino_runner.components.power_ups.power_up_manager import PowerUpManager
+from dino_runner.components.music import Music
 
 class Game:
     def __init__(self):
         pygame.init()
-        pygame.mixer.init()
         pygame.display.set_caption(TITLE)
         pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -20,12 +21,17 @@ class Game:
         self.y_pos_bg = 380
         self.death_count = 0
         self.score = 0
-        
+        self.highest_score = 0
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
-    
+        self.player = Dinosaur()
+        self.music = Music()
+
     def execute(self):
+        
         self.executing = True
+        #self.play_music(0)
+        self.music.play_menu_music()
         while self.executing:
             if not self.playing:
                 self.show_menu()
@@ -35,21 +41,24 @@ class Game:
     
 
     def run(self):
-        # Game loop: events - update - draw
         self.playing = True
-        self.reset_game()
+        self.music.play_playing_music()
         while self.playing:
             self.events()
             self.update()
             self.draw()
     
     def reset_game(self):
-        self.player = Dinosaur()
         self.obstacle_manager.reset_obstacles()
         self.power_up_manager.reset_power_ups()
          
         self.game_speed = 20
         self.score = 0
+        self.death_count = 0
+
+    def continue_game(self):
+        self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
 
     def events(self):
         for event in pygame.event.get():
@@ -66,6 +75,8 @@ class Game:
         
     def update_score(self):
         self.score+=1
+        if self.score > self.highest_score:
+            self.highest_score = self.score
         if self.score%100 == 0:
             self.game_speed+=5
             POINT_SOUND.play()
@@ -73,11 +84,12 @@ class Game:
         
     def draw(self):
         self.clock.tick(FPS)
-        self.screen.fill((255, 255, 255))
+        self.fill_screen()
         self.draw_background()
-        
+
         self.player.draw(self.screen)
         self.draw_score()
+        self.draw_deaths()
         self.draw_power_up_time()
         
         self.obstacle_manager.draw(self.screen)
@@ -90,70 +102,83 @@ class Game:
             time_to_show = round((self.player.power_up_time_up - pygame.time.get_ticks())/1000, 2)
             
             if time_to_show >=0:
-                font = pygame.font.Font(FONT_STYLE, 22)
-                text = font.render(f"Power Up: {time_to_show}", True, (255,0,0))
-                text_rect = text.get_rect()
-                text_rect.x = 425
-                text_rect.y = 100
-                self.screen.blit(text, text_rect)
+                self.draw_text(f'Power Up: {time_to_show}', 530, 100, FONT_COLOR['RED'])
+                #power_up_text = FONT.render(f"Power Up: {time_to_show}", True, FONT_COLOR['RED'])
+                #text_rect = power_up_text.get_rect()
+                #text_rect.x = 425
+                #text_rect.y = 100
+                #self.screen.blit(power_up_text, text_rect)
             else:
                 self.player.has_power_up = False
+                self.player.has_hammer = False
+                self.player.has_shield = False
+                self.player.has_sword = False
                 self.player.type = DEFAULT_TYPE
                 
     def draw_score(self):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        text = font.render(f"Score: {self.score}", True, (0,0,0))
-        text_rect = text.get_rect()
-        text_rect.center = (1000, 50)
-        
-        self.screen.blit(text, text_rect)
+        self.draw_text(f'Score: {self.score}', 1000, 50, FONT_COLOR['YELLOW'])
+        self.draw_text(f'Highest Score: {self.highest_score}', 125, 60, FONT_COLOR['AQUA'])
     
     def draw_background(self):
-        image_width = BG.get_width()
-        self.screen.blit(BG, (self.x_pos_bg, self.y_pos_bg))
-        self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
+        image_width = BG[2].get_width()
+        #self.screen.blit(BG[1], (0, -140))
+        self.screen.blit(BG[2], (0, 0))
+        self.screen.blit(BG[2], (image_width + SCREEN_WIDTH, SCREEN_WIDTH))
         if self.x_pos_bg <= -image_width:
-            self.screen.blit(BG, (image_width + self.x_pos_bg, self.y_pos_bg))
+            self.screen.blit(BG[2], (image_width + SCREEN_WIDTH, SCREEN_WIDTH))
             self.x_pos_bg = 0
         self.x_pos_bg -= self.game_speed
         
-    def show_menu(self):
-        self.screen.fill((255,255,255))
-        default_font = pygame.font.Font(FONT_STYLE, 22)
-        half_screen_height = SCREEN_HEIGHT //2
-        half_screen_width = SCREEN_WIDTH //2
+    def fill_screen(self):
+        self.screen.fill(FONT_COLOR['WHITE'])
         
+
+    def draw_text(self, message, x, y, color):
+        self.text = FONT.render(message, True, color)
+        text_rect = self.text.get_rect()
+        text_rect.center = (x, y)
+        self.screen.blit(self.text, text_rect)
+
+    def show_menu(self):
+        self.fill_screen()
+
         if self.death_count == 0:
-            #font = pygame.font.Font(FONT_STYLE, 22)
-            text = default_font.render("Press (S) to start playing", True, (0,0,0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_width, half_screen_height)
-            self.screen.blit(text, text_rect)
+            self.draw_text("Press (S) to start playing", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT, FONT_COLOR['BLACK'])
+            
+            
         else:
-            #font = pygame.font.Font(FONT_STYLE, 22)
-            text = default_font.render("Press (C) to continue playing", True, (0,0,0))
-            text_rect = text.get_rect()
-            text_rect.center = (half_screen_width, half_screen_height)
-            self.screen.blit(text, text_rect)
+            self.draw_text("Press (C) to continue playing", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT, FONT_COLOR['BLACK'])
+
+            self.draw_text("Press (R) to restart the game", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT + 30, FONT_COLOR['BLACK'])
+
+            self.draw_text("Press (X) to check for this run stats", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT + 60, FONT_COLOR['BLACK'])
+
+    #def show_stats_menu(self):
+     #   self.fill_screen()
+      #  self.draw_menu_text(f'{Highe}')
         
         pygame.display.update()
-        
         self.handle_events_on_menu()
     
     def handle_events_on_menu(self):
         for event in pygame.event.get():
-            if event.type ==pygame.QUIT:
+            if event.type == pygame.QUIT:
                 self.playing = False
                 self.executing = False
             elif event.type == pygame.KEYDOWN:
                 if pygame.key.get_pressed()[pygame.K_s] and self.death_count == 0:
                     self.run()
+                elif pygame.key.get_pressed()[pygame.K_r]:
+                    self.player = Dinosaur()
+                    self.reset_game()
+                    self.run()
                 elif pygame.key.get_pressed()[pygame.K_c]:
+                    self.continue_game()
                     self.run()
         
-        
-    def show_deaths(self):
-        show_deaths = self.FONT.render((f'Deaths: {self.deaths}'), True, (0, 0, 0))
-        self.screen.blit(show_deaths, (SCREEN_WIDTH - 150, (SCREEN_HEIGHT + 10) - SCREEN_HEIGHT))
+
+    def draw_deaths(self):
+        self.draw_text(f'Deaths: {self.death_count}', 1000, 80, FONT_COLOR['GREEN'])
+
 
             
