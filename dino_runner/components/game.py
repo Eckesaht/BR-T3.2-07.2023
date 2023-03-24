@@ -1,6 +1,6 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, POINT_SOUND, FONT, FONT_COLOR, HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT
+from dino_runner.utils.constants import BG, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS, DEFAULT_TYPE, POINT_SOUND, FONT, FONT_COLOR, HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT
 
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
@@ -11,17 +11,17 @@ class Game:
     def __init__(self):
         pygame.init()
         pygame.display.set_caption(TITLE)
-        pygame.display.set_icon(ICON)
         self.screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.playing = False
         self.executing = False
         self.game_speed = 20
         self.x_pos_bg = 0
-        self.y_pos_bg = 380
+        self.y_pos_bg = -15
         self.death_count = 0
         self.score = 0
         self.highest_score = 0
+        self.max_lives = 3
         self.obstacle_manager = ObstacleManager()
         self.power_up_manager = PowerUpManager()
         self.player = Dinosaur()
@@ -30,7 +30,6 @@ class Game:
     def execute(self):
         
         self.executing = True
-        #self.play_music(0)
         self.music.play_menu_music()
         while self.executing:
             if not self.playing:
@@ -103,31 +102,25 @@ class Game:
             
             if time_to_show >=0:
                 self.draw_text(f'Power Up: {time_to_show}', 530, 100, FONT_COLOR['RED'])
-                #power_up_text = FONT.render(f"Power Up: {time_to_show}", True, FONT_COLOR['RED'])
-                #text_rect = power_up_text.get_rect()
-                #text_rect.x = 425
-                #text_rect.y = 100
-                #self.screen.blit(power_up_text, text_rect)
             else:
                 self.player.has_power_up = False
-                self.player.has_hammer = False
+                self.player.has_spin = False
                 self.player.has_shield = False
-                self.player.has_sword = False
                 self.player.type = DEFAULT_TYPE
                 
     def draw_score(self):
         self.draw_text(f'Score: {self.score}', 1000, 50, FONT_COLOR['YELLOW'])
         self.draw_text(f'Highest Score: {self.highest_score}', 125, 60, FONT_COLOR['AQUA'])
-    
+
+
     def draw_background(self):
-        image_width = BG[2].get_width()
-        #self.screen.blit(BG[1], (0, -140))
-        self.screen.blit(BG[2], (0, 0))
-        self.screen.blit(BG[2], (image_width + SCREEN_WIDTH, SCREEN_WIDTH))
+        image_width = BG.get_width()
+        self.x_pos_bg -= 1
         if self.x_pos_bg <= -image_width:
-            self.screen.blit(BG[2], (image_width + SCREEN_WIDTH, SCREEN_WIDTH))
             self.x_pos_bg = 0
-        self.x_pos_bg -= self.game_speed
+        self.screen.blit(BG, (self.x_pos_bg, 0))
+        self.screen.blit(BG, (self.x_pos_bg + image_width, 0))
+
         
     def fill_screen(self):
         self.screen.fill(FONT_COLOR['WHITE'])
@@ -141,21 +134,15 @@ class Game:
 
     def show_menu(self):
         self.fill_screen()
-
         if self.death_count == 0:
             self.draw_text("Press (S) to start playing", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT, FONT_COLOR['BLACK'])
-            
-            
+
         else:
             self.draw_text("Press (C) to continue playing", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT, FONT_COLOR['BLACK'])
 
             self.draw_text("Press (R) to restart the game", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT + 30, FONT_COLOR['BLACK'])
 
             self.draw_text("Press (X) to check for this run stats", HALF_SCREEN_WIDTH, HALF_SCREEN_HEIGHT + 60, FONT_COLOR['BLACK'])
-
-    #def show_stats_menu(self):
-     #   self.fill_screen()
-      #  self.draw_menu_text(f'{Highe}')
         
         pygame.display.update()
         self.handle_events_on_menu()
@@ -176,7 +163,6 @@ class Game:
                     self.continue_game()
                     self.run()
         
-
     def draw_deaths(self):
         self.draw_text(f'Deaths: {self.death_count}', 1000, 80, FONT_COLOR['GREEN'])
 
